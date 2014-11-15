@@ -5,7 +5,22 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    # calls = []
+    # trace = TracePoint.new(:call) do |tp|
+    #   calls << [tp.defined_class, tp.method_id, tp.lineno]
+    # end
+    # trace.enable
+    # @users = User.all.to_a
+    # trace.disable
+    # pp calls.group_by(&:itself).map {|k, v| {k => v.length}}.sort_by {|h| -h.values.first }
+
+    StackProf.run(mode: :cpu, out: 'tmp/stackprof-cpu-ar.dump') do
+      @users = User.all.to_a
+    end
+  end
+
+  def index_erb
+    @users = User.all.to_a
   end
 
   # GET /users/1
